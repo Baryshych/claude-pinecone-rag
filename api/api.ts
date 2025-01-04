@@ -28,8 +28,9 @@ const upload = multer({
     limits: { fileSize: 1024*1024*10 /* 10 Mb */ },
     fileFilter: (req, file, cb) => {
         //TODO check by hashsum
-        if (fs.existsSync(`${uploadDirectory}/${file.originalname}`))
-            cb(new Error('File already exists'))
+        const fileExists = fs.existsSync(`${uploadDirectory}/${file.originalname}`)
+        // if (fileExists)
+        //     cb(new Error('File already exists'))
         cb(null, true)
     }
 });

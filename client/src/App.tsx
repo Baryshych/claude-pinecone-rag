@@ -1,6 +1,6 @@
 import {useState} from 'react'
+import {Button, Form, Row, Col, Alert, Card, CardBody, CardTitle, Table} from 'react-bootstrap'
 import './App.css'
-import {Button, Form, Row} from 'react-bootstrap'
 
 function App() {
     const [file, setFile] = useState<File | null>(null);
@@ -69,8 +69,9 @@ function App() {
         <>
             <h1>Claude file analizer</h1>
             <Row>
-                Status:
-                <p>{status}</p>
+                <Alert variant='light'>
+                    Status: {status}
+                </Alert>
             </Row>
             <Row>
                 <Form.Group controlId="formFile" className="mb-3">
@@ -80,23 +81,34 @@ function App() {
                                   onChange={handleFileChange}/>
                 </Form.Group>
             </Row>
+
             {file && (
                 <Row>
-                    File details:
-                    <ul>
-                        <li>Name: {file.name}</li>
-                        <li>Type: {file.type}</li>
-                        <li>Size: {file.size} bytes</li>
-                    </ul>
+                    <Card>
+                        <Card.Header>
+                            <CardTitle>
+                                File details:
+                            </CardTitle>
+                        </Card.Header>
+                        <Card.Body>
+                            <CardBody>
+                                <Row><Col>Name:</Col><Col> {file.name}</Col></Row>
+                                <Row><Col>Type:</Col><Col> {file.type}</Col></Row>
+                                <Row><Col>Size:</Col><Col> {file.size} bytes</Col></Row>
+                            </CardBody>
+                        </Card.Body>
+                    </Card>
                 </Row>
             )}
             {embeddings && (
-                <Row>
+                <Card>
+                    <Card.Header>
                     File details:
-                    <ul>
+                    </Card.Header>
+                    <Card.Body>
                         <li>Number of chunks: {embeddings['chunksSize']}</li>
-                    </ul>
-                </Row>
+                    </Card.Body>
+                </Card>
             )}
             {file && file.type === "application/pdf" && (
                 <Row>
@@ -108,19 +120,23 @@ function App() {
             )}
             <div>
                 {answer && (
-                    <section>
-                        <section>
+                    <Row>
+                        <Row>
                             {answer['answer']}
-                        </section>
-                        <section>
-                            <ul>
-                                {answer['context'].map(c => <li>
-                                    Content: c['metadata']['text_content'] <br/>
-                                    Score: c['metadata'][]
-                                </li>)}
-                            </ul>
-                        </section>
-                    </section>
+                        </Row>
+                        <Table striped bordered hover>
+                            <thead>
+                            <tr>
+                                <th>Content</th>
+                                <th>Score</th>
+                            </tr>
+                            </thead>
+                            {answer['context'].map(c => <tr>
+                                <td>{c['metadata']['text_content']}</td>
+                                <td>TODO</td>
+                            </tr>)}
+                        </Table>
+                    </Row>
                 )}
                 <Form.Group className="mb-3">
                     <Row style={{marginTop: 30}}>
