@@ -77,13 +77,11 @@ export const updatePineconeIndex = async (document) => {
             }
         }
         console.log(`Uploading ${vectors.length} vectors to Pinecone.`);
-
         await pineconeIndex.upsert(vectors);
         console.log("Pinecone index updated with document vectors.");
 
         return {vectors, metadata}
-    }
-;
+    };
 
 export const queryPineconeIndex = async (query) => {
     const vectorstore = await PineconeStore.fromExistingIndex(embedding_model, {pineconeIndex, maxConcurrency: 5})

@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import {useState} from 'react'
 import './App.css'
+import {Button, Form, Row} from 'react-bootstrap'
 
 function App() {
     const [file, setFile] = useState<File | null>(null);
@@ -25,15 +26,20 @@ function App() {
             formData.append('file', file);
 
             try {
-                const result = await fetch(import.meta.env.VITE_API_URL+'/documents', {
+                const result = await fetch(import.meta.env.VITE_API_URL + '/documents', {
                     method: 'POST',
                     body: formData,
                 });
 
-                const data = await result.json();
-                setStatus('File uploaded!');
-                setEmbeddings(data?.metadata)
+                if (result.status === 200) {
+                    const data = await result.json();
+                    setStatus('File uploaded!');
+                    setEmbeddings(data?.metadata)
+                } else {
+                    setStatus('File already exists')
+                }
             } catch (error) {
+                setStatus(error.message)
                 console.error(error);
             }
         }
@@ -42,9 +48,9 @@ function App() {
     const handleQuery = async () => {
         if (query) {
             try {
-                const result = await fetch(import.meta.env.VITE_API_URL+'/query', {
+                const result = await fetch(import.meta.env.VITE_API_URL + '/query', {
                     method: 'POST',
-                    body: JSON.stringify({ query: query }),
+                    body: JSON.stringify({query: query}),
                     headers: {
                         "Content-Type": "application/json"
                     }
@@ -58,69 +64,80 @@ function App() {
         }
     };
 
-  // @ts-ignore
+    // @ts-ignore
     return (
-    <>
-      <h1>Claude file analizer</h1>
-        <section>
-            Status:
-            <p>{status}</p>
-        </section>
-        <div className="input-group">
-            <input id="file" type="file" accept="application/pdf" onChange={handleFileChange} />
-        </div>
-        {file && (
-            <section>
-                File details:
-                <ul>
-                    <li>Name: {file.name}</li>
-                    <li>Type: {file.type}</li>
-                    <li>Size: {file.size} bytes</li>
-                </ul>
-            </section>
-        )}
-        {embeddings && (
-            <section>
-                File details:
-                <ul>
-                    <li>Number of chunks: {embeddings['chunksSize']}</li>
-                </ul>
-            </section>
-        )}
-        {file && file.type === "application/pdf" && (
-            <button
-                onClick={handleUpload}
-                className="submit"
-            >Upload a file</button>
-        )}
-        { embeddings &&
-        <div>
-            {answer && (
-              <section>
-                <section>
-                    {answer['answer']}
-                </section>
-                <section>
+        <>
+            <h1>Claude file analizer</h1>
+            <Row>
+                Status:
+                <p>{status}</p>
+            </Row>
+            <Row>
+                <Form.Group controlId="formFile" className="mb-3">
+                    <Form.Control size="lg"
+                                  type="file"
+                                  accept="application/pdf"
+                                  onChange={handleFileChange}/>
+                </Form.Group>
+            </Row>
+            {file && (
+                <Row>
+                    File details:
                     <ul>
-                    { answer['context'].map(c => <li>
-                        Content: c['metadata']['text_content'] <br/>
-                        Score: c['metadata'][]
-                    </li>) }
+                        <li>Name: {file.name}</li>
+                        <li>Type: {file.type}</li>
+                        <li>Size: {file.size} bytes</li>
                     </ul>
-                </section>
-              </section>
+                </Row>
             )}
-            <input id="query" type="text" onChange={handleQueryChange} />
-            <button
-                onClick={handleQuery}
-                className="submit"
-                disabled={!(query && query.length > 0)}
-            >Ask the GPT
-            </button>
-        </div>
-        }
-    </>
-  )
+            {embeddings && (
+                <Row>
+                    File details:
+                    <ul>
+                        <li>Number of chunks: {embeddings['chunksSize']}</li>
+                    </ul>
+                </Row>
+            )}
+            {file && file.type === "application/pdf" && (
+                <Row>
+                    <Button
+                        onClick={handleUpload}
+                        className="submit"
+                    >Upload a file</Button>
+                </Row>
+            )}
+            <div>
+                {answer && (
+                    <section>
+                        <section>
+                            {answer['answer']}
+                        </section>
+                        <section>
+                            <ul>
+                                {answer['context'].map(c => <li>
+                                    Content: c['metadata']['text_content'] <br/>
+                                    Score: c['metadata'][]
+                                </li>)}
+                            </ul>
+                        </section>
+                    </section>
+                )}
+                <Form.Group className="mb-3">
+                    <Row style={{marginTop: 30}}>
+                        <Form.Control as="textarea" rows={3} id="query" onChange={handleQueryChange}/>
+                    </Row>
+                    <Row>
+                        <Button
+                            onClick={handleQuery}
+                            className="submit"
+                            disabled={!(query && query.length > 0)}
+                        >Ask the GPT
+                        </Button>
+                    </Row>
+                </Form.Group>
+            </div>
+        </>
+    )
 }
 
 export default App

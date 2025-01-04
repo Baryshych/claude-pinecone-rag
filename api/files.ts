@@ -1,17 +1,6 @@
 import fs from 'fs';
-import PDFParser from 'pdf-parse';
+import * as PDFParser from "pdf-parse/lib/pdf-parse.js";
 import {updatePineconeIndex} from './database'
-// Function to process the file data (perform your file processing logic here)
-export const processFileData = (fileData) => {
-    fs.writeFile('output.txt', fileData, (err) => {
-        if (err) {
-            console.error('Error writing file:', err);
-        } else {
-            console.log('File written successfully');
-        }
-    });
-}
-
 // Function to process the PDF and count word occurrences
 export const processPDF = async (pdfFilePath: string) => {
     try {
