@@ -1,20 +1,23 @@
-<p> NB: This version was made in approx 2 hours</p>
+<p> <b><i>NB:</i></b> This version was made in approx 2 hours</p>
 <p>There are two projects in this repo.</p>
-**api** - backend
-**client** - frontend
+<b>api</b> - backend
+<b>client</b> - frontend
 
 <p>Required ENVs are listed in `env.template` in projects folders</p>
 
 ## To launch the project: 
 ### backend: 
 From the api folder: 
+```bash
 npm i
 npx tsx api.ts 
-
+```
 ### frontend:
-From the client folder: 
+From the client folder:
+```bash
 npm i
 npm run dev
+```
 
 ## Considerations taken:
 1. To limit number for embeddings calls I check for file existancy and send requests in bulk

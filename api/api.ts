@@ -15,6 +15,9 @@ app.use(express.json())
 
 createPineconeIndex();
 
+// TODO move to any storage and store hashsums
+const fileNames = []
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
@@ -26,13 +29,6 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage,
     limits: { fileSize: 1024*1024*10 /* 10 Mb */ },
-    fileFilter: (req, file, cb) => {
-        //TODO check by hashsum
-        const fileExists = fs.existsSync(`${uploadDirectory}/${file.originalname}`)
-        // if (fileExists)
-        //     cb(new Error('File already exists'))
-        cb(null, true)
-    }
 });
 
 app.post('/documents', upload.single('file'), async (req, res) => {
@@ -48,8 +44,14 @@ app.post('/documents', upload.single('file'), async (req, res) => {
         const fileExtension = uploadedFile.mimetype ? uploadedFile.mimetype : null;
 
         if (fileExtension === 'application/pdf') {
-            const content = await processPDF(filePath);
-            res.send(content)
+            const fileExists = fileNames.includes(fileName)
+            if (!fileExists) {
+                const content = await processPDF(filePath);
+                fileNames.push(fileName)
+                res.send(content)
+            } else {
+                res.status(400).json({error: 'File already exists'});
+            }
         } else {
             res.status(400).json({error: 'File should be in pdf'});
         }

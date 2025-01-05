@@ -103,7 +103,7 @@ function App() {
             {embeddings && (
                 <Card>
                     <Card.Header>
-                    File details:
+                        File details:
                     </Card.Header>
                     <Card.Body>
                         <li>Number of chunks: {embeddings['chunksSize']}</li>
@@ -122,7 +122,9 @@ function App() {
                 {answer && (
                     <Row>
                         <Row>
-                            {answer['answer']}
+                            <Alert variant='light'>
+                                {answer['answer']}
+                            </Alert>
                         </Row>
                         <Table striped bordered hover>
                             <thead>
