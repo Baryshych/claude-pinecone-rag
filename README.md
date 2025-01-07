@@ -2,6 +2,7 @@
 <p>There are two projects in this repo.</p>
 <b>api</b> - backend
 <b>client</b> - frontend
+WIP Python script in hosted here: https://colab.research.google.com/drive/10LCN2CTill5YOeq13aLSQAA852Xd0SFt?usp=sharing
 
 <p>Required ENVs are listed in `env.template` in projects folders</p>
 
